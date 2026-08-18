@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProjectImage extends Model
 {
-    protected $fillable = ['project_id', 'image', 'caption', 'order'];
+    protected $fillable = ['project_id', 'image', 'type', 'caption', 'order'];
 
     public function project()
     {

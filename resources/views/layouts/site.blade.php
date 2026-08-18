@@ -24,12 +24,16 @@
 
     // TR ↔ EN rota haritası
     $routeMap = [
-        'en.home'       => ['tr' => route('home'),           'en' => url('en')],
-        'home'          => ['tr' => route('home'),           'en' => url('en')],
-        'en.news.index' => ['tr' => route('news.index'),     'en' => url('en/news')],
-        'news.index'    => ['tr' => route('news.index'),     'en' => url('en/news')],
-        'en.news.show'  => ['tr' => $slug ? route('news.show', $slug) : route('news.index'), 'en' => url('en/news/' . ($slug ?? ''))],
-        'news.show'     => ['tr' => $slug ? route('news.show', $slug) : route('news.index'), 'en' => $slug ? url('en/news/' . $slug) : url('en/news')],
+        'en.home'              => ['tr' => route('home'),                    'en' => url('en')],
+        'home'                 => ['tr' => route('home'),                    'en' => url('en')],
+        'en.news.index'        => ['tr' => route('news.index'),              'en' => url('en/news')],
+        'news.index'           => ['tr' => route('news.index'),              'en' => url('en/news')],
+        'en.news.show'         => ['tr' => $slug ? route('news.show', $slug) : route('news.index'), 'en' => url('en/news/' . ($slug ?? ''))],
+        'news.show'            => ['tr' => $slug ? route('news.show', $slug) : route('news.index'), 'en' => $slug ? url('en/news/' . $slug) : url('en/news')],
+        'en.projects.index'    => ['tr' => route('projects.index'),          'en' => url('en/projects')],
+        'projects.index'       => ['tr' => route('projects.index'),          'en' => url('en/projects')],
+        'en.projects.show'     => ['tr' => $slug ? route('projects.show', $slug) : route('projects.index'), 'en' => url('en/projects/' . ($slug ?? ''))],
+        'projects.show'        => ['tr' => $slug ? route('projects.show', $slug) : route('projects.index'), 'en' => $slug ? url('en/projects/' . $slug) : url('en/projects')],
     ];
 
     $trUrl = $routeMap[$routeName]['tr'] ?? route('home');
@@ -52,7 +56,7 @@
                 <div class="header-right">
                     <ul class="header-nav-col">
                         <li><a href="#">{{ __('site.nav.profile') }}</a></li>
-                        <li><a href="#">{{ __('site.nav.projects') }}</a></li>
+                        <li><a href="{{ $isEn ? url('en/projects') : route('projects.index') }}" class="{{ request()->routeIs('projects.*') || request()->routeIs('en.projects.*') ? 'active' : '' }}">{{ __('site.nav.projects') }}</a></li>
                         <li><a href="{{ $isEn ? url('en/news') : route('news.index') }}" class="{{ request()->routeIs('news.*') || request()->routeIs('en.news.*') ? 'active' : '' }}">{{ __('site.nav.news') }}</a></li>
                         <li><a href="#">{{ __('site.nav.contact') }}</a></li>
                     </ul>
@@ -101,7 +105,7 @@
 
 <nav class="mobile-nav" id="mobileNav">
     <a href="#">{{ __('site.nav.profile') }}</a>
-    <a href="#">{{ __('site.nav.projects') }}</a>
+    <a href="{{ $isEn ? url('en/projects') : route('projects.index') }}" class="{{ request()->routeIs('projects.*') || request()->routeIs('en.projects.*') ? 'active' : '' }}">{{ __('site.nav.projects') }}</a>
     <a href="{{ $isEn ? url('en/news') : route('news.index') }}" class="{{ request()->routeIs('news.*') || request()->routeIs('en.news.*') ? 'active' : '' }}">{{ __('site.nav.news') }}</a>
     <a href="#">{{ __('site.nav.contact') }}</a>
 </nav>

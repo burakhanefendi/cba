@@ -14,8 +14,8 @@
         <div class="stat-label">Kategori</div>
     </div>
     <div class="stat-card">
-        <div class="stat-number">{{ $stats['team'] }}</div>
-        <div class="stat-label">Ekip Üyesi</div>
+        <div class="stat-number">{{ $stats['news'] }}</div>
+        <div class="stat-label">Haber</div>
     </div>
     <div class="stat-card {{ $stats['messages'] > 0 ? 'highlight' : '' }}">
         <div class="stat-number">{{ $stats['messages'] }}</div>
@@ -30,8 +30,8 @@
         <span>Yeni Proje Ekle</span>
         <span class="icon">+</span>
     </a>
-    <a href="{{ route('admin.team.create') }}" class="quick-link">
-        <span>Ekip Üyesi Ekle</span>
+    <a href="{{ route('admin.news.create') }}" class="quick-link">
+        <span>Yeni Haber Ekle</span>
         <span class="icon">+</span>
     </a>
     <a href="{{ route('admin.messages.index') }}" class="quick-link">

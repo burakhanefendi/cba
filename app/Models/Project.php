@@ -10,8 +10,10 @@ class Project extends Model
     use HasTranslations;
 
     protected $fillable = [
-        'category_id', 'title', 'title_en', 'slug', 'description', 'description_en',
-        'location', 'year', 'cover_image', 'order',
+        'title', 'title_en', 'subtitle', 'subtitle_en',
+        'slug', 'description', 'description_en',
+        'location', 'client', 'land_area', 'construction_area',
+        'year', 'cover_image', 'video_url', 'order',
         'is_active', 'is_featured',
     ];
 
@@ -20,13 +22,38 @@ class Project extends Model
         'is_featured' => 'boolean',
     ];
 
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class)->orderBy('order');
+    }
+
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsToMany(Category::class)->orderBy('order');
     }
 
     public function images()
     {
         return $this->hasMany(ProjectImage::class)->orderBy('order');
+    }
+
+    public function sliderImages()
+    {
+        return $this->hasMany(ProjectImage::class)->where('type', 'slider')->orderBy('order');
+    }
+
+    public function galleryImages()
+    {
+        return $this->hasMany(ProjectImage::class)->where('type', 'gallery')->orderBy('order');
+    }
+
+    public function designers()
+    {
+        return $this->hasMany(ProjectDesigner::class)->orderBy('order');
+    }
+
+    public function team()
+    {
+        return $this->hasMany(ProjectTeam::class)->orderBy('order');
     }
 }

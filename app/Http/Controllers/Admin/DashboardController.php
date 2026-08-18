@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\ContactMessage;
-use App\Models\TeamMember;
+use App\Models\News;
 use App\Models\Category;
 
 class DashboardController extends Controller
@@ -15,7 +15,7 @@ class DashboardController extends Controller
         $stats = [
             'projects'  => Project::count(),
             'messages'  => ContactMessage::where('is_read', false)->count(),
-            'team'      => TeamMember::count(),
+            'news'      => News::count(),
             'categories'=> Category::count(),
         ];
 

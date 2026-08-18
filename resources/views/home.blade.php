@@ -4,12 +4,40 @@
 
 @section('content')
 
-{{-- Hero --}}
+{{-- Hero Slider --}}
 <div class="container">
     <section class="hero">
-        <div class="hero-placeholder">
-            <span>Ana Görsel</span>
-        </div>
+        @if($heroSlides->count())
+            <div class="hero-slider" id="heroSlider">
+                <div class="hero-slider-track" id="heroTrack">
+                    @foreach($heroSlides as $slide)
+                        <div class="hero-slide">
+                            @if($slide->link)
+                                <a href="{{ $slide->link }}" target="_blank" rel="noopener">
+                                    <img src="{{ asset('storage/' . $slide->image) }}" alt="">
+                                </a>
+                            @else
+                                <img src="{{ asset('storage/' . $slide->image) }}" alt="">
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+
+                @if($heroSlides->count() > 1)
+                    <button class="hero-slider-btn hero-slider-prev" id="heroPrev">&#8592;</button>
+                    <button class="hero-slider-btn hero-slider-next" id="heroNext">&#8594;</button>
+                    <div class="hero-slider-dots">
+                        @foreach($heroSlides as $i => $slide)
+                            <span class="hero-dot {{ $i === 0 ? 'active' : '' }}" data-index="{{ $i }}"></span>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        @else
+            <div class="hero-placeholder">
+                <span>Ana Görsel</span>
+            </div>
+        @endif
     </section>
 </div>
 
@@ -17,7 +45,12 @@
 <div class="container">
     <div class="intro">
         <div class="intro-inner">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent blandit diam ullamcorper mi vulputate consequat. Morbi scelerisque arcu ut diam varius suscipit. Sed accumsan turpis eget tincidunt ligula. Duis porta lorem at nisl facilisis aliquet. Aenean sollicitudin ex tempus elit pellentesque. Fusce ut sapien eget sapien accumsan dictum. Etiam tincidunt ligula eget risus suscipit sed accumsan turpis varius. Duis porta lorem at nisl facilisis cursus. Sed accumsan turpis eget tincidunt ligula consequat facilisis lorem.</p>
+            @php $introText = app()->getLocale() === 'en' ? \App\Models\Setting::get('intro_text_en') : \App\Models\Setting::get('intro_text'); @endphp
+            @if($introText)
+                <p>{{ $introText }}</p>
+            @else
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent blandit diam ullamcorper mi vulputate consequat. Morbi scelerisque arcu ut diam varius suscipit. Sed accumsan turpis eget tincidunt ligula. Duis porta lorem at nisl facilisis aliquet. Aenean sollicitudin ex tempus elit pellentesque. Fusce ut sapien eget sapien accumsan dictum. Etiam tincidunt ligula eget risus suscipit sed accumsan turpis varius. Duis porta lorem at nisl facilisis cursus. Sed accumsan turpis eget tincidunt ligula consequat facilisis lorem.</p>
+            @endif
         </div>
     </div>
 </div>
@@ -29,19 +62,21 @@
 
         <div class="projects-grid">
             @forelse($featuredProjects as $project)
-                <div class="project-card">
+                @php
+                    $projectUrl = app()->getLocale() === 'en'
+                        ? url('en/projects/' . $project->slug)
+                        : route('projects.show', $project->slug);
+                @endphp
+                <a href="{{ $projectUrl }}" class="project-card">
                     <div class="project-card-image">
                         @if($project->cover_image)
-                            <img src="{{ asset('storage/' . $project->cover_image) }}" alt="{{ $project->title }}">
+                            <img src="{{ asset('storage/' . $project->cover_image) }}" alt="{{ $project->trans('title') }}">
                         @else
                             <div class="placeholder"><span>Görsel</span></div>
                         @endif
                     </div>
-                    <div class="project-card-title">{{ $project->title }}</div>
-                    @if($project->location)
-                        <div class="project-card-meta">{{ $project->location }}</div>
-                    @endif
-                </div>
+                    <div class="project-card-title">{{ $project->trans('title') }}</div>
+                </a>
             @empty
                 @for($i = 0; $i < 10; $i++)
                     <div class="project-card">
@@ -93,3 +128,32 @@
 </div>
 
 @endsection
+
+@if($heroSlides->count() > 1)
+@push('scripts')
+<script>
+(function () {
+    const track = document.getElementById('heroTrack');
+    if (!track) return;
+    const slides = track.querySelectorAll('.hero-slide');
+    const dots   = document.querySelectorAll('.hero-dot');
+    let current  = 0;
+    let timer;
+
+    function goTo(n) {
+        current = (n + slides.length) % slides.length;
+        track.style.transform = `translateX(-${current * 100}%)`;
+        dots.forEach((d, i) => d.classList.toggle('active', i === current));
+    }
+
+    function autoPlay() { timer = setInterval(() => goTo(current + 1), 5000); }
+
+    document.getElementById('heroPrev')?.addEventListener('click', () => { clearInterval(timer); goTo(current - 1); autoPlay(); });
+    document.getElementById('heroNext')?.addEventListener('click', () => { clearInterval(timer); goTo(current + 1); autoPlay(); });
+    dots.forEach(d => d.addEventListener('click', () => { clearInterval(timer); goTo(+d.dataset.index); autoPlay(); }));
+
+    autoPlay();
+})();
+</script>
+@endpush
+@endif

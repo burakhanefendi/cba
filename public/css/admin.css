@@ -79,6 +79,55 @@ body {
     padding: 16px 24px 6px;
 }
 
+/* ── Nav Dropdown ──────────────────────────────── */
+
+.nav-dropdown-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 24px;
+    background: none;
+    border: none;
+    color: #aaa;
+    font-family: inherit;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+    text-align: left;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle.active {
+    color: #fff;
+    background: #1e1e1e;
+}
+
+.nav-dropdown-arrow {
+    flex-shrink: 0;
+    transition: transform 0.2s;
+}
+
+.nav-dropdown.open .nav-dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.nav-dropdown-menu {
+    display: none;
+    background: #0a0a0a;
+}
+
+.nav-dropdown.open .nav-dropdown-menu {
+    display: block;
+}
+
+.nav-dropdown-menu a {
+    padding-left: 36px;
+    font-size: 11px;
+}
+
 .sidebar-footer {
     padding: 20px 24px;
     border-top: 1px solid #222;

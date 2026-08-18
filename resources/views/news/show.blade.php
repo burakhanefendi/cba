@@ -47,21 +47,25 @@
 
             {{-- Sol: başlık, tarih, linkler --}}
             <div class="news-detail-left">
-                <h2 class="news-detail-title">{{ $item->trans('title') }}</h2>
-                <div class="news-detail-date">{{ $item->formatted_date }}</div>
+                <div class="news-detail-meta">
+                    <h2 class="news-detail-title">{{ $item->trans('title') }}</h2>
+                    <div class="news-detail-date">{{ $item->formatted_date }}</div>
+                </div>
 
                 @if($item->links->count())
                     @php $sortedLinks = $item->links->sortByDesc('type'); @endphp
-                    <ul class="news-detail-links">
-                        @foreach($sortedLinks as $link)
-                            <li>
-                                <a href="{{ $link->url }}" target="_blank" rel="noopener">
-                                    <span class="link-icon {{ $link->type === 'project' ? 'link-icon-project' : 'link-icon-link' }}">{{ $link->type === 'project' ? 'P' : 'L' }}</span>
-                                    {{ $link->title }}
-                                </a>
-                            </li>
-                        @endforeach
-                    </ul>
+                    <div class="news-detail-links-wrap">
+                        <ul class="news-detail-links">
+                            @foreach($sortedLinks as $link)
+                                <li>
+                                    <a href="{{ $link->url }}" target="_blank" rel="noopener">
+                                        <span class="link-icon {{ $link->type === 'project' ? 'link-icon-project' : 'link-icon-link' }}">{{ $link->type === 'project' ? 'P' : 'L' }}</span>
+                                        {{ $link->title }}
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
                 @endif
             </div>
 
