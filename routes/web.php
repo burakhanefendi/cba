@@ -9,7 +9,6 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
 use App\Http\Controllers\Admin\TeamMemberController;
 use App\Http\Controllers\Admin\ProfileEntryController;
-use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\HomepageController;
@@ -65,12 +64,15 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('categories', CategoryController::class);
+    Route::post('projects/reorder', [AdminProjectController::class, 'reorder'])->name('projects.reorder');
     Route::resource('projects', AdminProjectController::class);
+    Route::post('news/reorder', [AdminNewsController::class, 'reorder'])->name('news.reorder');
     Route::resource('news', AdminNewsController::class);
     Route::resource('team', TeamMemberController::class);
 
     Route::get('awards', [ProfileEntryController::class, 'index'])->name('awards.index');
     Route::get('awards/create', [ProfileEntryController::class, 'create'])->name('awards.create');
+    Route::post('awards/reorder', [ProfileEntryController::class, 'reorder'])->name('awards.reorder');
     Route::post('awards', [ProfileEntryController::class, 'store'])->name('awards.store');
     Route::get('awards/{entry}/edit', [ProfileEntryController::class, 'edit'])->name('awards.edit');
     Route::put('awards/{entry}', [ProfileEntryController::class, 'update'])->name('awards.update');
@@ -78,11 +80,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
 
     Route::get('publications', [ProfileEntryController::class, 'index'])->name('publications.index');
     Route::get('publications/create', [ProfileEntryController::class, 'create'])->name('publications.create');
+    Route::post('publications/reorder', [ProfileEntryController::class, 'reorder'])->name('publications.reorder');
     Route::post('publications', [ProfileEntryController::class, 'store'])->name('publications.store');
     Route::get('publications/{entry}/edit', [ProfileEntryController::class, 'edit'])->name('publications.edit');
     Route::put('publications/{entry}', [ProfileEntryController::class, 'update'])->name('publications.update');
     Route::delete('publications/{entry}', [ProfileEntryController::class, 'destroy'])->name('publications.destroy');
-    Route::resource('messages', ContactMessageController::class)->only(['index', 'show', 'destroy']);
     Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
 

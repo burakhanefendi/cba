@@ -142,10 +142,6 @@
                     <label>Yayın Tarihi</label>
                     <input type="date" name="published_at" value="{{ old('published_at', isset($news) ? $news->published_at?->format('Y-m-d') : date('Y-m-d')) }}">
                 </div>
-                <div class="form-group">
-                    <label>Sıra</label>
-                    <input type="number" name="order" value="{{ old('order', $news->order ?? 0) }}" style="width:90px;">
-                </div>
                 <div class="form-group" style="margin-bottom:0;">
                     <div class="form-check">
                         <input type="checkbox" name="is_active" id="is_active" value="1"

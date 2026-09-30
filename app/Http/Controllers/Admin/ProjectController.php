@@ -15,7 +15,7 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::with('categories')->orderBy('order')->orderByDesc('id')->paginate(20);
+        $projects = Project::with('categories')->orderBy('order')->orderByDesc('id')->get();
         return view('admin.projects.index', compact('projects'));
     }
 
@@ -45,13 +45,12 @@ class ProjectController extends Controller
             'year'               => 'nullable|integer|min:1900|max:2100',
             'video_url'          => 'nullable|url|max:255',
             'cover_image'        => 'nullable|string|max:500',
-            'order'              => 'nullable|integer',
         ]);
 
         $data['slug'] = $this->uniqueSlug(Str::slug($data['title']));
         $data['is_active'] = $request->boolean('is_active');
         $data['is_featured'] = $request->boolean('is_featured');
-        $data['order'] = $data['order'] ?? 0;
+        $data['order'] = (int) Project::max('order') + 1;
 
         $categoryIds = $data['category_ids'] ?? [];
         unset($data['category_ids']);
@@ -94,12 +93,11 @@ class ProjectController extends Controller
             'year'               => 'nullable|integer|min:1900|max:2100',
             'video_url'          => 'nullable|url|max:255',
             'cover_image'        => 'nullable|string|max:500',
-            'order'              => 'nullable|integer',
         ]);
 
         $data['is_active'] = $request->boolean('is_active');
         $data['is_featured'] = $request->boolean('is_featured');
-        $data['order'] = $data['order'] ?? 0;
+        unset($data['order']);
 
         $categoryIds = $data['category_ids'] ?? [];
         unset($data['category_ids']);
@@ -123,6 +121,20 @@ class ProjectController extends Controller
         $project->delete();
 
         return redirect()->route('admin.projects.index')->with('success', 'Proje silindi.');
+    }
+
+    public function reorder(Request $request)
+    {
+        $ids = $request->validate([
+            'ids'   => 'required|array',
+            'ids.*' => 'integer|exists:projects,id',
+        ])['ids'];
+
+        foreach ($ids as $i => $id) {
+            Project::where('id', $id)->update(['order' => $i]);
+        }
+
+        return response()->json(['success' => true]);
     }
 
     private function syncImages(Project $project, array $paths, string $type): void

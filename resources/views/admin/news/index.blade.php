@@ -8,20 +8,23 @@
     <h2>Haberler</h2>
     <a href="{{ route('admin.news.create') }}" class="btn btn-primary">+ Yeni Haber</a>
 </div>
+<p class="table-hint">Sıralamak için satırları sürükleyin. Bu sıra sitede de kullanılır.</p>
 
 <div class="table-wrapper">
     <table>
         <thead>
             <tr>
+                <th style="width:36px;"></th>
                 <th>Başlık</th>
                 <th>Tarih</th>
                 <th>Durum</th>
                 <th></th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="sortableNews">
             @forelse($news as $item)
-                <tr>
+                <tr data-id="{{ $item->id }}">
+                    <td class="drag-handle" title="Sürükle">⠿</td>
                     <td>{{ $item->title }}</td>
                     <td>{{ $item->formatted_date }}</td>
                     <td>
@@ -38,12 +41,15 @@
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="4" style="color:#bbb;text-align:center;padding:24px;">Henüz haber yok.</td></tr>
+                <tr><td colspan="5" style="color:#bbb;text-align:center;padding:24px;">Henüz haber yok.</td></tr>
             @endforelse
         </tbody>
     </table>
 </div>
 
-<div style="margin-top:16px;">{{ $news->links() }}</div>
+@include('admin.partials.sortable-table', [
+    'tbodyId' => 'sortableNews',
+    'url' => route('admin.news.reorder'),
+])
 
 @endsection

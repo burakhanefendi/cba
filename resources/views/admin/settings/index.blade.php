@@ -15,7 +15,7 @@
 
         {{-- Logo --}}
         <div class="settings-section">
-            <div class="settings-section-title">Logo</div>
+            <div class="settings-section-title">Logo ve Favicon</div>
 
             <div class="form-group">
                 <label>Mevcut Logo</label>
@@ -32,6 +32,23 @@
                 <label>Logo Güncelle <span style="font-weight:300;text-transform:none;letter-spacing:0;color:#bbb;">(PNG, JPG, SVG — maks. 2MB)</span></label>
                 <input type="file" name="logo" accept="image/*">
                 @error('logo') <div class="form-error">{{ $message }}</div> @enderror
+            </div>
+
+            <div class="form-group">
+                <label>Mevcut Favicon</label>
+                @if($settings->get('favicon'))
+                    <div class="favicon-preview">
+                        <img src="{{ asset('storage/' . $settings->get('favicon')) }}" alt="Favicon">
+                    </div>
+                @else
+                    <div class="logo-empty">Favicon yüklenmemiş</div>
+                @endif
+            </div>
+
+            <div class="form-group">
+                <label>Favicon Güncelle <span style="font-weight:300;text-transform:none;letter-spacing:0;color:#bbb;">(PNG, ICO, SVG — maks. 1MB)</span></label>
+                <input type="file" name="favicon" accept="image/png,image/jpeg,image/svg+xml,image/webp,image/x-icon,.ico">
+                @error('favicon') <div class="form-error">{{ $message }}</div> @enderror
             </div>
         </div>
 
@@ -123,6 +140,19 @@
 .logo-preview img {
     max-height: 80px;
     max-width: 300px;
+    object-fit: contain;
+}
+.favicon-preview {
+    margin-top: 8px;
+    margin-bottom: 16px;
+    padding: 12px;
+    border: 1px solid #e5e5e5;
+    display: inline-block;
+    background: #fafafa;
+}
+.favicon-preview img {
+    width: 32px;
+    height: 32px;
     object-fit: contain;
 }
 .logo-empty {

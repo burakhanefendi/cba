@@ -8,22 +8,24 @@
     <h2>{{ $labels['plural'] }}</h2>
     <a href="{{ route($routes . '.create') }}" class="btn btn-primary">+ Yeni {{ $labels['singular'] }}</a>
 </div>
+<p class="table-hint">Sıralamak için satırları sürükleyin. Bu sıra sitede de kullanılır.</p>
 
 <div class="table-wrapper">
     <table>
         <thead>
             <tr>
+                <th style="width:36px;"></th>
                 <th>Görsel</th>
                 <th>Başlık</th>
                 <th>PDF</th>
-                <th>Sıra</th>
                 <th>Durum</th>
                 <th></th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="sortableEntries">
             @forelse($entries as $entry)
-                <tr>
+                <tr data-id="{{ $entry->id }}">
+                    <td class="drag-handle" title="Sürükle">⠿</td>
                     <td style="width:56px;">
                         @if($entry->image)
                             <img src="{{ asset('storage/' . $entry->image) }}"
@@ -34,7 +36,6 @@
                     </td>
                     <td><strong>{{ $entry->title }}</strong></td>
                     <td>{{ $entry->pdf ? 'Var' : '—' }}</td>
-                    <td>{{ $entry->order }}</td>
                     <td>
                         <span class="badge {{ $entry->is_active ? 'badge-active' : 'badge-inactive' }}">
                             {{ $entry->is_active ? 'Aktif' : 'Pasif' }}
@@ -54,5 +55,10 @@
         </tbody>
     </table>
 </div>
+
+@include('admin.partials.sortable-table', [
+    'tbodyId' => 'sortableEntries',
+    'url' => route($routes . '.reorder'),
+])
 
 @endsection

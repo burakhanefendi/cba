@@ -14,7 +14,7 @@ class NewsController extends Controller
 {
     public function index()
     {
-        $news = News::orderByDesc('published_at')->paginate(20);
+        $news = News::orderBy('order')->orderByDesc('id')->get();
         return view('admin.news.index', compact('news'));
     }
 
@@ -31,11 +31,12 @@ class NewsController extends Controller
             'cover_image'  => 'nullable|string|max:500',
         ]);
 
-        $data = $request->only(['title', 'title_en', 'excerpt', 'excerpt_en', 'content', 'content_en', 'published_at', 'order', 'is_active']);
+        $data = $request->only(['title', 'title_en', 'excerpt', 'excerpt_en', 'content', 'content_en', 'published_at', 'is_active']);
         $data['slug']      = Str::slug($request->title) . '-' . time();
         $data['is_active']    = $request->boolean('is_active');
         $data['is_featured']  = $request->boolean('is_featured');
         $data['published_at'] = $request->filled('published_at') ? $request->published_at : now();
+        $data['order']        = (int) News::max('order') + 1;
 
         $news = News::create($data);
 
@@ -60,7 +61,7 @@ class NewsController extends Controller
             'cover_image'  => 'nullable|string|max:500',
         ]);
 
-        $data = $request->only(['title', 'title_en', 'excerpt', 'excerpt_en', 'content', 'content_en', 'order']);
+        $data = $request->only(['title', 'title_en', 'excerpt', 'excerpt_en', 'content', 'content_en']);
         $data['is_active']    = $request->boolean('is_active');
         $data['is_featured']  = $request->boolean('is_featured');
         $data['published_at'] = $request->filled('published_at') ? $request->published_at : now();
@@ -81,6 +82,20 @@ class NewsController extends Controller
         $news->delete();
 
         return redirect()->route('admin.news.index')->with('success', 'Haber silindi.');
+    }
+
+    public function reorder(Request $request)
+    {
+        $ids = $request->validate([
+            'ids'   => 'required|array',
+            'ids.*' => 'integer|exists:news,id',
+        ])['ids'];
+
+        foreach ($ids as $i => $id) {
+            News::where('id', $id)->update(['order' => $i]);
+        }
+
+        return response()->json(['success' => true]);
     }
 
     private function syncCoverImages(News $news, Request $request): void

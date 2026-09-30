@@ -17,10 +17,6 @@
         <div class="stat-number">{{ $stats['news'] }}</div>
         <div class="stat-label">Haber</div>
     </div>
-    <div class="stat-card {{ $stats['messages'] > 0 ? 'highlight' : '' }}">
-        <div class="stat-number">{{ $stats['messages'] }}</div>
-        <div class="stat-label">Okunmamış Mesaj</div>
-    </div>
 </div>
 
 <p class="section-title">Hızlı Erişim</p>
@@ -33,10 +29,6 @@
     <a href="{{ route('admin.news.create') }}" class="quick-link">
         <span>Yeni Haber Ekle</span>
         <span class="icon">+</span>
-    </a>
-    <a href="{{ route('admin.messages.index') }}" class="quick-link">
-        <span>Mesajları Gör</span>
-        <span class="icon">→</span>
     </a>
 </div>
 

@@ -19,6 +19,7 @@ class SettingController extends Controller
     {
         $request->validate([
             'logo'            => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:2048',
+            'favicon'         => 'nullable|file|mimes:png,jpg,jpeg,svg,webp,ico|max:1024',
             'default_locale'  => 'required|in:tr,en',
             'contact_map_url' => 'nullable|url',
         ]);
@@ -29,6 +30,14 @@ class SettingController extends Controller
 
             $path = $request->file('logo')->store('settings', 'public');
             Setting::set('logo', $path);
+        }
+
+        if ($request->hasFile('favicon')) {
+            $old = Setting::get('favicon');
+            if ($old) Storage::disk('public')->delete($old);
+
+            $path = $request->file('favicon')->store('settings', 'public');
+            Setting::set('favicon', $path);
         }
 
         $fields = ['site_title', 'site_description', 'contact_email', 'contact_phone', 'contact_address', 'contact_map_url', 'default_locale'];

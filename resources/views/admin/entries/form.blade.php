@@ -99,10 +99,6 @@
                     <label>Dış Link <span class="label-hint">— LINKE GIT</span></label>
                     <input type="url" name="external_url" value="{{ old('external_url', $entry->external_url ?? '') }}" placeholder="https://...">
                 </div>
-                <div class="form-group">
-                    <label>Sıra</label>
-                    <input type="number" name="order" value="{{ old('order', $entry->order ?? 0) }}" style="width:90px;">
-                </div>
                 <div class="form-group" style="margin-bottom:0;">
                     <div class="form-check">
                         <input type="checkbox" name="is_active" id="is_active" value="1"

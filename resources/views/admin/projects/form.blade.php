@@ -185,10 +185,6 @@
 
             {{-- Meta --}}
             <div class="form-card">
-                <div class="form-group">
-                    <label>Sıra</label>
-                    <input type="number" name="order" value="{{ old('order', $project->order ?? 0) }}" style="width:90px;">
-                </div>
                 <div class="form-group" style="margin-bottom:0;">
                     <div class="form-check">
                         <input type="checkbox" name="is_active" id="is_active" value="1"

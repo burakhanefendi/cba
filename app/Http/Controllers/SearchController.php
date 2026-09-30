@@ -48,7 +48,7 @@ class SearchController extends Controller
                         ->orWhere('content', 'like', $like)
                         ->orWhere('content_en', 'like', $like);
                 })
-                ->orderByDesc('published_at')
+                ->orderBy('order')
                 ->limit(12)
                 ->get();
 
@@ -59,7 +59,7 @@ class SearchController extends Controller
                         ->orWhere('subtitle', 'like', $like)
                         ->orWhere('subtitle_en', 'like', $like);
                 })
-                ->orderBy('title')
+                ->orderBy('order')
                 ->limit(12)
                 ->get();
 
@@ -70,7 +70,7 @@ class SearchController extends Controller
                         ->orWhere('subtitle', 'like', $like)
                         ->orWhere('subtitle_en', 'like', $like);
                 })
-                ->orderBy('title')
+                ->orderBy('order')
                 ->limit(12)
                 ->get();
 

@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CBA — Yönetim Paneli</title>
+    @php $favicon = \App\Models\Setting::favicon(); @endphp
+    <link rel="icon" type="{{ $favicon['type'] }}" href="{{ $favicon['url'] }}">
     <link rel="stylesheet" href="/css/admin-login.css">
 </head>
 <body>

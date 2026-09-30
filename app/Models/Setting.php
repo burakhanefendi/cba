@@ -28,4 +28,23 @@ class Setting extends Model
 
         return in_array($locale, ['tr', 'en'], true) ? $locale : 'tr';
     }
+
+    public static function favicon(): array
+    {
+        $path = static::get('favicon');
+        $url = $path
+            ? asset('storage/' . $path)
+            : asset('storage/media/favicon-cba.png');
+        $ext = strtolower(pathinfo($path ?: 'favicon-cba.png', PATHINFO_EXTENSION));
+
+        $type = match ($ext) {
+            'svg' => 'image/svg+xml',
+            'ico' => 'image/x-icon',
+            'webp' => 'image/webp',
+            'jpg', 'jpeg' => 'image/jpeg',
+            default => 'image/png',
+        };
+
+        return ['url' => $url, 'type' => $type];
+    }
 }
