@@ -62,6 +62,32 @@
         {{-- Sağ: Görseller + Meta --}}
         <div class="news-sidebar">
 
+            {{-- Thumbnail --}}
+            <div class="form-card">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>Thumbnail <span class="label-hint">— listeleme sayfası görseli</span></label>
+                    <div id="coverPreview" style="margin-bottom:8px;">
+                        @if(isset($project) && $project->cover_image)
+                            <div class="media-preview-item" data-path="{{ $project->cover_image }}" style="position:relative;display:inline-block;max-width:160px;">
+                                <img src="{{ asset('storage/' . $project->cover_image) }}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;">
+                                <button type="button" class="media-preview-remove" onclick="clearCover()">×</button>
+                            </div>
+                        @endif
+                    </div>
+                    <input type="hidden" name="cover_image" id="coverImageInput" value="{{ old('cover_image', $project->cover_image ?? '') }}">
+                    <div style="display:flex;gap:6px;align-items:center;">
+                        <button type="button" class="btn btn-secondary btn-sm"
+                            onclick="MediaPicker.open({ multiple: false, onSelect: items => setCover(items[0]) })">
+                            Kütüphaneden Seç
+                        </button>
+                        @if(isset($project) && $project->cover_image)
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="clearCover()">Kaldır</button>
+                        @endif
+                    </div>
+                    <p style="font-size:11px;color:#aaa;margin:6px 0 0;">Seçilmezse otomatik atanır (slider 1. görsel)</p>
+                </div>
+            </div>
+
             {{-- Ana Görseller --}}
             <div class="form-card">
                 <div class="form-group" style="margin-bottom:0;">
@@ -126,64 +152,34 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Lokasyon</label>
-                    <input type="text" name="location" value="{{ old('location', $project->location ?? '') }}" placeholder="İstanbul, Türkiye">
-                </div>
-                <div class="form-group">
-                    <label>İşveren</label>
-                    <input type="text" name="client" value="{{ old('client', $project->client ?? '') }}">
-                </div>
-                <div class="form-group">
-                    <label>Toplam Arsa Alanı</label>
-                    <input type="text" name="land_area" value="{{ old('land_area', $project->land_area ?? '') }}" placeholder="m²">
-                </div>
-                <div class="form-group">
-                    <label>Toplam İnşaat Alanı</label>
-                    <input type="text" name="construction_area" value="{{ old('construction_area', $project->construction_area ?? '') }}" placeholder="m²">
-                </div>
-                <div class="form-group">
-                    <label>Yıl</label>
-                    <input type="number" name="year" value="{{ old('year', $project->year ?? '') }}" placeholder="{{ date('Y') }}" style="width:100px;">
-                </div>
-                <div class="form-group">
                     <label>Video URL <span class="label-hint">— YouTube/Vimeo linki</span></label>
                     <input type="url" name="video_url" value="{{ old('video_url', $project->video_url ?? '') }}" placeholder="https://...">
                 </div>
-            </div>
-
-            {{-- Mimari Tasarım --}}
-            <div class="form-card">
-                <div class="sidebar-row-header">
-                    <label>Mimari Tasarım</label>
-                    <button type="button" class="btn btn-secondary btn-sm" id="addDesigner">+ Ekle</button>
-                </div>
-                <div id="designersContainer">
-                    @if(isset($project))
-                        @foreach($project->designers as $d)
-                            <div class="tag-row">
-                                <input type="text" name="designers[]" value="{{ $d->name }}" placeholder="Ad Soyad">
-                                <button type="button" class="btn btn-danger btn-sm remove-tag">×</button>
-                            </div>
-                        @endforeach
-                    @endif
+                <div class="form-group">
+                    <label>Yıl <span class="label-hint">— sıralama için</span></label>
+                    <input type="number" name="year" value="{{ old('year', $project->year ?? '') }}" placeholder="2024" min="1900" max="2100">
                 </div>
             </div>
 
-            {{-- Proje Ekibi --}}
+            {{-- Proje Bilgileri (Serbest Metin) --}}
             <div class="form-card">
-                <div class="sidebar-row-header">
-                    <label>Proje Ekibi</label>
-                    <button type="button" class="btn btn-secondary btn-sm" id="addTeam">+ Ekle</button>
+                <div class="lang-tabs" id="meta-lang-tabs">
+                    <button type="button" class="lang-tab active" data-lang="meta-tr">TR</button>
+                    <button type="button" class="lang-tab" data-lang="meta-en">EN</button>
                 </div>
-                <div id="teamContainer">
-                    @if(isset($project))
-                        @foreach($project->team as $t)
-                            <div class="tag-row">
-                                <input type="text" name="team[]" value="{{ $t->name }}" placeholder="Ad Soyad">
-                                <button type="button" class="btn btn-danger btn-sm remove-tag">×</button>
-                            </div>
-                        @endforeach
-                    @endif
+                <div class="lang-panel" id="panel-meta-tr">
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label>Proje Bilgileri <span class="label-hint">— lokasyon, yıl, işveren vb. serbest metin</span></label>
+                        <textarea name="meta_text" id="content-meta-tr" style="display:none;">{{ old('meta_text', $project->meta_text ?? '') }}</textarea>
+                        <div id="editor-meta-tr" class="quill-editor"></div>
+                    </div>
+                </div>
+                <div class="lang-panel" id="panel-meta-en" style="display:none;">
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label>Project Info (EN)</label>
+                        <textarea name="meta_text_en" id="content-meta-en" style="display:none;">{{ old('meta_text_en', $project->meta_text_en ?? '') }}</textarea>
+                        <div id="editor-meta-en" class="quill-editor"></div>
+                    </div>
                 </div>
             </div>
 
@@ -365,15 +361,27 @@ const quillEn = new Quill('#editor-en', { theme: 'snow', modules: { toolbar: too
 const contentEn = document.getElementById('content-en');
 if (contentEn.value) quillEn.root.innerHTML = contentEn.value;
 
+const quillMetaTr = new Quill('#editor-meta-tr', { theme: 'snow', modules: { toolbar: toolbarOptions } });
+const contentMetaTr = document.getElementById('content-meta-tr');
+if (contentMetaTr.value) quillMetaTr.root.innerHTML = contentMetaTr.value;
+
+const quillMetaEn = new Quill('#editor-meta-en', { theme: 'snow', modules: { toolbar: toolbarOptions } });
+const contentMetaEn = document.getElementById('content-meta-en');
+if (contentMetaEn.value) quillMetaEn.root.innerHTML = contentMetaEn.value;
+
 document.getElementById('projectForm').addEventListener('submit', function () {
     contentTr.value = quillTr.root.innerHTML;
     contentEn.value = quillEn.root.innerHTML;
+    contentMetaTr.value = quillMetaTr.root.innerHTML;
+    contentMetaEn.value = quillMetaEn.root.innerHTML;
 });
 
 document.querySelectorAll('.lang-tab').forEach(tab => {
     tab.addEventListener('click', function () {
-        document.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.lang-panel').forEach(p => p.style.display = 'none');
+        const tabGroup = this.closest('.form-card').querySelectorAll('.lang-tab');
+        const panelGroup = this.closest('.form-card').querySelectorAll('.lang-panel');
+        tabGroup.forEach(t => t.classList.remove('active'));
+        panelGroup.forEach(p => p.style.display = 'none');
         this.classList.add('active');
         document.getElementById('panel-' + this.dataset.lang).style.display = '';
     });
@@ -388,9 +396,6 @@ function addTagRow(containerId, fieldName) {
     row.querySelector('input').focus();
 }
 
-document.getElementById('addDesigner').addEventListener('click', () => addTagRow('designersContainer', 'designers'));
-document.getElementById('addTeam').addEventListener('click', () => addTagRow('teamContainer', 'team'));
-
 document.addEventListener('click', function (e) {
     if (e.target.classList.contains('remove-tag')) e.target.closest('.tag-row').remove();
 });
@@ -401,6 +406,20 @@ document.addEventListener('click', function (e) {
 
 @push('scripts')
 <script>
+function setCover(item) {
+    const path = item.url.split('/storage/')[1];
+    document.getElementById('coverImageInput').value = path;
+    const preview = document.getElementById('coverPreview');
+    preview.innerHTML = `<div class="media-preview-item" data-path="${path}" style="position:relative;display:inline-block;max-width:160px;">
+        <img src="${item.url}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;">
+        <button type="button" class="media-preview-remove" onclick="clearCover()">×</button>
+    </div>`;
+}
+function clearCover() {
+    document.getElementById('coverImageInput').value = '';
+    document.getElementById('coverPreview').innerHTML = '';
+}
+
 function addToPreview(containerId, items) {
     const container = document.getElementById(containerId);
     items.forEach(item => {

@@ -12,11 +12,11 @@
         {{-- Ana Görsel / Slider --}}
         @php
             $sliderImages = collect();
-            if ($item->cover_image) {
-                $sliderImages->push((object)['src' => asset('storage/' . $item->cover_image)]);
-            }
             foreach ($item->sliderImages as $img) {
                 $sliderImages->push((object)['src' => asset('storage/' . $img->image)]);
+            }
+            if ($sliderImages->isEmpty() && $item->cover_image) {
+                $sliderImages->push((object)['src' => asset('storage/' . $item->cover_image)]);
             }
         @endphp
 
@@ -82,8 +82,8 @@
                     <a href="{{ asset('storage/' . $img->image) }}"
                        class="news-gallery-item glightbox"
                        data-gallery="news-gallery"
-                       data-description="{{ $item->trans('title') }}">
-                        <img src="{{ asset('storage/' . $img->image) }}" alt="{{ $item->trans('title') }}">
+                       data-glightbox="title: ; description: ;">
+                        <img src="{{ asset('storage/' . $img->image) }}" alt="">
                     </a>
                 @endforeach
             </div>
@@ -101,12 +101,20 @@
     display: block;
     overflow: hidden;
     cursor: zoom-in;
+    aspect-ratio: 1 / 1;
 }
 .news-gallery-item img {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
     transition: transform 0.3s ease;
 }
 .news-gallery-item:hover img {
     transform: scale(1.03);
+}
+.glightbox-desc, .gdesc-inner, .gslide-description, .gslide-title, .gslide-desc {
+    display: none !important;
 }
 </style>
 @endpush
@@ -135,6 +143,13 @@
     dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.index)));
 })();
 
-GLightbox({ selector: '.glightbox', touchNavigation: true, loop: true });
+GLightbox({
+    selector: '.glightbox',
+    touchNavigation: true,
+    loop: true,
+    moreLength: 0,
+    moreText: '',
+    descPosition: 'bottom'
+});
 </script>
 @endpush

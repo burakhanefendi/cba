@@ -24,8 +24,12 @@
                 </div>
 
                 @if($heroSlides->count() > 1)
-                    <button class="hero-slider-btn hero-slider-prev" id="heroPrev">&#8592;</button>
-                    <button class="hero-slider-btn hero-slider-next" id="heroNext">&#8594;</button>
+                    <button class="hero-slider-btn hero-slider-prev" id="heroPrev">
+                        <svg width="10" height="18" viewBox="0 0 10 18" fill="none"><polyline points="9,1 1,9 9,17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <button class="hero-slider-btn hero-slider-next" id="heroNext">
+                        <svg width="10" height="18" viewBox="0 0 10 18" fill="none"><polyline points="1,1 9,9 1,17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
                     <div class="hero-slider-dots">
                         @foreach($heroSlides as $i => $slide)
                             <span class="hero-dot {{ $i === 0 ? 'active' : '' }}" data-index="{{ $i }}"></span>
@@ -58,7 +62,7 @@
 {{-- Projeler --}}
 <div class="container">
     <section class="section">
-        <h2 class="section-title">PROJELER</h2>
+        <h2 class="section-title">{{ app()->getLocale() === 'en' ? 'SELECTED PROJECTS' : 'SEÇİLMİŞ PROJELER' }}</h2>
 
         <div class="projects-grid">
             @forelse($featuredProjects as $project)
@@ -87,6 +91,9 @@
                     </div>
                 @endfor
             @endforelse
+        </div>
+        <div class="home-section-more">
+            <a href="{{ app()->getLocale() === 'en' ? url('en/projects') : route('projects.index') }}">{{ app()->getLocale() === 'en' ? 'All projects' : 'Tüm projeler' }}</a>
         </div>
     </section>
 </div>
@@ -124,6 +131,9 @@
             </div>
         @endif
 
+        <div class="home-section-more">
+            <a href="{{ app()->getLocale() === 'en' ? url('en/news') : route('news.index') }}">{{ app()->getLocale() === 'en' ? 'All news' : 'Tüm haberler' }}</a>
+        </div>
     </section>
 </div>
 

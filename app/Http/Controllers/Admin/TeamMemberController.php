@@ -3,63 +3,66 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\TeamMember;
 use Illuminate\Http\Request;
 
 class TeamMemberController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $members = TeamMember::orderBy('order')->orderBy('name')->get();
+        return view('admin.team.index', compact('members'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('admin.team.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $data = $this->validated($request);
+        $data['is_active'] = $request->boolean('is_active');
+        $data['order'] = $data['order'] ?? 0;
+
+        TeamMember::create($data);
+
+        return redirect()->route('admin.team.index')->with('success', 'Ekip üyesi eklendi.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(TeamMember $team)
     {
-        //
+        $member = $team;
+        return view('admin.team.edit', compact('member'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, TeamMember $team)
     {
-        //
+        $data = $this->validated($request);
+        $data['is_active'] = $request->boolean('is_active');
+        $data['order'] = $data['order'] ?? 0;
+
+        $team->update($data);
+
+        return redirect()->route('admin.team.index')->with('success', 'Ekip üyesi güncellendi.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(TeamMember $team)
     {
-        //
+        $team->delete();
+        return redirect()->route('admin.team.index')->with('success', 'Ekip üyesi silindi.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    private function validated(Request $request): array
     {
-        //
+        return $request->validate([
+            'name'     => 'required|string|max:255',
+            'title'    => 'nullable|string|max:255',
+            'title_en' => 'nullable|string|max:255',
+            'bio'      => 'nullable|string',
+            'bio_en'   => 'nullable|string',
+            'photo'    => 'nullable|string|max:500',
+            'order'    => 'nullable|integer',
+        ]);
     }
 }

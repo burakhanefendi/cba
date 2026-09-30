@@ -43,63 +43,44 @@
         {{-- 3 Kolonlu İçerik --}}
         <div class="project-detail-body">
 
-            {{-- Kolon 1: Başlık + Meta Bilgiler --}}
-            <div class="project-col-1">
-                <div class="col-inner" id="col1Inner">
+            {{-- Kolon 1+2: Başlık+Subtitle üstte, meta metin 2 kolona akar --}}
+            <div class="project-meta-cols">
+                <div class="project-meta-header">
                     <h2 class="project-detail-title">{{ $project->trans('title') }}</h2>
-
-                    <dl class="project-meta-list">
-                        @if($project->location)
-                            <dt>{{ app()->getLocale() === 'en' ? 'Location' : 'Lokasyon' }}</dt>
-                            <dd>{{ $project->location }}</dd>
-                        @endif
-                        @if($project->year)
-                            <dt>{{ app()->getLocale() === 'en' ? 'Year' : 'Yıl' }}</dt>
-                            <dd>{{ $project->year }}</dd>
-                        @endif
-                        @if($project->client)
-                            <dt>{{ app()->getLocale() === 'en' ? 'Client' : 'İşveren' }}</dt>
-                            <dd>{{ $project->client }}</dd>
-                        @endif
-                        @if($project->land_area)
-                            <dt>{{ app()->getLocale() === 'en' ? 'Land Area' : 'Toplam Arsa Alanı' }}</dt>
-                            <dd>{{ $project->land_area }} m²</dd>
-                        @endif
-                        @if($project->construction_area)
-                            <dt>{{ app()->getLocale() === 'en' ? 'Construction Area' : 'Toplam İnşaat Alanı' }}</dt>
-                            <dd>{{ $project->construction_area }} m²</dd>
-                        @endif
-                    </dl>
-                </div>
-                <button class="project-expand-btn" id="expandBtn1" aria-label="Daha fazla göster">+</button>
-            </div>
-
-            {{-- Kolon 2: Alt Başlık + Mimari Tasarım + Proje Ekibi --}}
-            <div class="project-col-2">
-                <div class="col-inner" id="col2Inner">
                     @if($project->trans('subtitle'))
                         <p class="project-subtitle">{{ $project->trans('subtitle') }}</p>
                     @endif
-
-                    @if($project->designers->count())
-                        <div class="project-team-section">
-                            <div class="project-team-label">{{ app()->getLocale() === 'en' ? 'Architectural Design' : 'Mimari Tasarım' }}</div>
-                            @foreach($project->designers as $d)
-                                <div class="project-team-name">{{ $d->name }}</div>
-                            @endforeach
-                        </div>
-                    @endif
-
-                    @if($project->team->count())
-                        <div class="project-team-section">
-                            <div class="project-team-label">{{ app()->getLocale() === 'en' ? 'Project Team' : 'Proje Ekibi' }}</div>
-                            @foreach($project->team as $t)
-                                <div class="project-team-name">{{ $t->name }}</div>
-                            @endforeach
-                        </div>
+                </div>
+                <div class="project-meta-inner" id="metaInner">
+                    @php $metaText = $project->trans('meta_text'); @endphp
+                    @if($metaText)
+                        <div class="project-meta-rich">{!! $metaText !!}</div>
+                    @else
+                        <dl class="project-meta-list">
+                            @if($project->location)
+                                <dt>{{ app()->getLocale() === 'en' ? 'Location' : 'Lokasyon' }}</dt>
+                                <dd>{{ $project->location }}</dd>
+                            @endif
+                            @if($project->year)
+                                <dt>{{ app()->getLocale() === 'en' ? 'Year' : 'Yıl' }}</dt>
+                                <dd>{{ $project->year }}</dd>
+                            @endif
+                            @if($project->client)
+                                <dt>{{ app()->getLocale() === 'en' ? 'Client' : 'İşveren' }}</dt>
+                                <dd>{{ $project->client }}</dd>
+                            @endif
+                            @if($project->land_area)
+                                <dt>{{ app()->getLocale() === 'en' ? 'Land Area' : 'Toplam Arsa Alanı' }}</dt>
+                                <dd>{{ $project->land_area }} m²</dd>
+                            @endif
+                            @if($project->construction_area)
+                                <dt>{{ app()->getLocale() === 'en' ? 'Construction Area' : 'Toplam İnşaat Alanı' }}</dt>
+                                <dd>{{ $project->construction_area }} m²</dd>
+                            @endif
+                        </dl>
                     @endif
                 </div>
-                <button class="project-expand-btn" id="expandBtn2" aria-label="Daha fazla göster">+</button>
+                <button class="project-expand-btn" id="expandBtnMeta" aria-label="Daha fazla göster">+</button>
             </div>
 
             {{-- Kolon 3: Açıklama + Video --}}
@@ -124,6 +105,7 @@
                 </div>
                 <button class="project-expand-btn" id="expandBtn3" aria-label="Daha fazla göster">+</button>
             </div>
+
         </div>
 
         {{-- Alt Galeri --}}
@@ -133,8 +115,8 @@
                     <a href="{{ asset('storage/' . $img->image) }}"
                        class="news-gallery-item glightbox"
                        data-gallery="project-gallery"
-                       data-description="{{ $project->trans('title') }}">
-                        <img src="{{ asset('storage/' . $img->image) }}" alt="{{ $project->trans('title') }}">
+                       data-glightbox="title: ; description: ;">
+                        <img src="{{ asset('storage/' . $img->image) }}" alt="">
                     </a>
                 @endforeach
             </div>
@@ -204,8 +186,30 @@
     display: grid;
     grid-template-columns: 24% 24% 49%;
     gap: 12px;
-    margin-bottom: 40px;
+    margin-bottom: 0;
 }
+
+.project-meta-cols {
+    grid-column: span 2;
+    align-self: start;
+    position: relative;
+}
+
+.project-meta-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+    align-items: start;
+}
+.project-meta-inner {
+    column-count: 2;
+    column-gap: 12px;
+}
+
+.project-col-1 { align-self: start; position: relative; }
+.project-col-2 { align-self: start; position: relative; }
+.project-col-3 { align-self: start; position: relative; }
 
 .project-detail-title {
     font-size: 18px;
@@ -213,19 +217,19 @@
     line-height: 1.35;
     color: #111;
     margin-bottom: 20px;
+    break-after: avoid;
+    break-inside: avoid;
 }
 
 .project-subtitle {
     font-size: 12px;
-    font-weight: 300;
+    font-weight: 500;
     color: #555;
     margin: 0 0 20px;
     line-height: 1.6;
 }
 
-.project-col-1 { align-self: start; position: relative; }
 .project-col-2 { align-self: start; position: relative; }
-.project-col-3 { align-self: start; position: relative; }
 
 .col-inner { overflow: hidden; }
 
@@ -271,6 +275,16 @@
     line-height: 1.4;
 }
 
+.project-meta-rich {
+    font-size: 12px;
+    font-weight: 300;
+    color: #333;
+    line-height: 1.7;
+}
+.project-meta-rich p { margin: 0 0 6px; }
+.project-meta-rich strong { font-weight: 500; }
+.project-meta-rich em { font-style: italic; }
+
 .project-team-section { margin-bottom: 20px; }
 .project-team-label {
     font-size: 10px;
@@ -285,6 +299,13 @@
     font-weight: 300;
     color: #333;
     line-height: 1.7;
+}
+
+.project-col-2 {
+    font-size: 13px;
+    line-height: 1.85;
+    color: #333;
+    font-weight: 300;
 }
 
 .project-col-3 {
@@ -307,9 +328,16 @@
     width: 100%; height: 100%;
 }
 
-.news-gallery-item { display: block; overflow: hidden; cursor: zoom-in; }
-.news-gallery-item img { transition: transform 0.3s ease; }
+.news-gallery-item { display: block; overflow: hidden; cursor: zoom-in; aspect-ratio: 1 / 1; }
+.news-gallery-item img {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
 .news-gallery-item:hover img { transform: scale(1.03); }
+.glightbox-desc, .gdesc-inner, .gslide-description, .gslide-title, .gslide-desc { display: none !important; }
 
 .similar-projects {
     margin-top: 60px;
@@ -339,9 +367,11 @@
 @media (max-width: 768px) {
     .project-detail-header { flex-direction: column; gap: 8px; }
     .project-detail-body { grid-template-columns: 1fr; gap: 0; }
+    .project-meta-header { grid-template-columns: 1fr; }
+    .project-meta-inner { column-count: 1; }
     .news-gallery { grid-template-columns: repeat(2, 1fr); }
     .project-meta-list { margin-bottom: 0; }
-    .project-col-2 { margin-top: 20px; }
+    .project-col-3 { margin-top: 20px; }
 }
 </style>
 @endpush
@@ -366,53 +396,55 @@
     dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.index)));
 })();
 
-GLightbox({ selector: '.glightbox', touchNavigation: true, loop: true });
+GLightbox({
+    selector: '.glightbox',
+    touchNavigation: true,
+    loop: true,
+    moreLength: 0,
+    moreText: '',
+    descPosition: 'bottom'
+});
 
-// Kolon hizalama + kırpma + toggle (tüm kolonlar)
+// Kolon hizalama + kırpma + toggle
 window.addEventListener('load', function () {
     requestAnimationFrame(function () {
         if (window.innerWidth <= 768) return;
 
-        var cols = [
-            { wrap: document.querySelector('.project-col-1'), inner: document.getElementById('col1Inner'), btn: document.getElementById('expandBtn1') },
-            { wrap: document.querySelector('.project-col-2'), inner: document.getElementById('col2Inner'), btn: document.getElementById('expandBtn2') },
-            { wrap: document.querySelector('.project-col-3'), inner: document.getElementById('col3Inner'), btn: document.getElementById('expandBtn3') },
-        ];
+        var metaInner = document.getElementById('metaInner');
+        var metaBtn   = document.getElementById('expandBtnMeta');
+        var col3Inner = document.getElementById('col3Inner');
+        var col3Btn   = document.getElementById('expandBtn3');
 
-        if (cols.some(function(c){ return !c.wrap || !c.inner || !c.btn; })) return;
+        if (!metaInner || !metaBtn || !col3Inner || !col3Btn) return;
 
-        // Doğal içerik yükseklikleri (align-self:start sayesinde gerçek değer)
-        var heights = cols.map(function(c){ return c.inner.scrollHeight; });
+        var metaH = metaInner.scrollHeight;
+        var col3H = col3Inner.scrollHeight;
 
-        // Referans yüksekliği = col1 ve col2'nin max'ı (meta veriler belirler)
-        var refHeight = Math.max(heights[0], heights[1]);
+        if (metaH > col3H) {
+            metaInner.style.overflow   = 'hidden';
+            metaInner.style.maxHeight  = col3H + 'px';
+            metaInner.style.transition = 'max-height 0.4s ease';
+            metaBtn.classList.add('visible');
+            var metaOpen = false;
+            metaBtn.addEventListener('click', function () {
+                metaOpen = !metaOpen;
+                metaInner.style.maxHeight = metaOpen ? metaH + 'px' : col3H + 'px';
+                metaBtn.textContent = metaOpen ? '−' : '+';
+            });
+        }
 
-        cols.forEach(function(c, i) {
-            var naturalH = heights[i];
-
-            // Alt hizalama: kısa kolonlara padding-top ekle
-            var pt = Math.max(0, refHeight - naturalH);
-            c.wrap.style.paddingTop = pt + 'px';
-
-            // Overflow yoksa buton gösterme
-            if (naturalH <= refHeight) return;
-
-            // Kırp ve buton göster
-            c.inner.style.overflow  = 'hidden';
-            c.inner.style.maxHeight = refHeight + 'px';
-            c.inner.style.transition = 'max-height 0.4s ease';
-            c.btn.classList.add('visible');
-
-            var open = false;
-            c.btn.addEventListener('click', (function(cw, ci, cn, cb, cpt) {
-                return function() {
-                    open = !open;
-                    ci.style.maxHeight = open ? cn + 'px' : refHeight + 'px';
-                    cb.textContent = open ? '−' : '+';
-                    cw.style.paddingTop = open ? '0' : cpt + 'px';
-                };
-            })(c.wrap, c.inner, naturalH, c.btn, pt));
-        });
+        if (col3H > metaH) {
+            col3Inner.style.overflow   = 'hidden';
+            col3Inner.style.maxHeight  = metaH + 'px';
+            col3Inner.style.transition = 'max-height 0.4s ease';
+            col3Btn.classList.add('visible');
+            var col3Open = false;
+            col3Btn.addEventListener('click', function () {
+                col3Open = !col3Open;
+                col3Inner.style.maxHeight = col3Open ? col3H + 'px' : metaH + 'px';
+                col3Btn.textContent = col3Open ? '−' : '+';
+            });
+        }
     });
 });
 </script>

@@ -13,6 +13,7 @@ class Project extends Model
         'title', 'title_en', 'subtitle', 'subtitle_en',
         'slug', 'description', 'description_en',
         'location', 'client', 'land_area', 'construction_area',
+        'meta_text', 'meta_text_en',
         'year', 'cover_image', 'video_url', 'order',
         'is_active', 'is_featured',
     ];

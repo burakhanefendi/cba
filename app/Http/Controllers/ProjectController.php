@@ -26,6 +26,18 @@ class ProjectController extends Controller
 
         $projects = $query->paginate(12)->withQueryString();
 
+        if ($request->expectsJson() || $request->ajax()) {
+            $locale = app()->getLocale();
+            return response()->json([
+                'data' => $projects->map(fn($p) => [
+                    'url'         => $locale === 'en' ? url('en/projects/' . $p->slug) : route('projects.show', $p->slug),
+                    'cover_image' => $p->cover_image ? asset('storage/' . $p->cover_image) : null,
+                    'title'       => $p->trans('title'),
+                ]),
+                'next_page_url' => $projects->nextPageUrl(),
+            ]);
+        }
+
         return view('projects.index', compact('projects', 'categories'));
     }
 

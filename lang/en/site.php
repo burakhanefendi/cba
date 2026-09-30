@@ -24,6 +24,15 @@ return [
         'project'  => 'Project',
         'link'     => 'Link',
     ],
+    'about' => [
+        'cafer'         => 'CAFER BOZKURT',
+        'studio'        => 'STUDIO',
+        'team'          => 'TEAM',
+        'awards'        => 'AWARDS',
+        'publications'  => 'PUBLICATIONS',
+        'pdf'           => 'VIEW PDF',
+        'go_link'       => 'GO TO LINK',
+    ],
     'projects' => [
         'title'    => 'PROJECTS',
         'location' => 'Location',
@@ -35,9 +44,17 @@ return [
         'name'    => 'Full Name',
         'email'   => 'Email',
         'phone'   => 'Phone',
+        'address' => 'Address',
+        'map'     => 'View on map',
         'subject' => 'Subject',
         'message' => 'Message',
         'send'    => 'Send',
+    ],
+    'search' => [
+        'title' => 'SEARCH',
+        'hint'  => 'Enter at least 2 characters to search.',
+        'empty' => 'No results for “:q”.',
+        'count' => ':n results — “:q”',
     ],
     'footer' => [
         'rights'    => 'All rights reserved.',

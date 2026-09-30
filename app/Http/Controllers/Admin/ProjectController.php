@@ -40,8 +40,11 @@ class ProjectController extends Controller
             'client'             => 'nullable|string|max:255',
             'land_area'          => 'nullable|string|max:255',
             'construction_area'  => 'nullable|string|max:255',
+            'meta_text'          => 'nullable|string',
+            'meta_text_en'       => 'nullable|string',
             'year'               => 'nullable|integer|min:1900|max:2100',
             'video_url'          => 'nullable|url|max:255',
+            'cover_image'        => 'nullable|string|max:500',
             'order'              => 'nullable|integer',
         ]);
 
@@ -86,8 +89,11 @@ class ProjectController extends Controller
             'client'             => 'nullable|string|max:255',
             'land_area'          => 'nullable|string|max:255',
             'construction_area'  => 'nullable|string|max:255',
+            'meta_text'          => 'nullable|string',
+            'meta_text_en'       => 'nullable|string',
             'year'               => 'nullable|integer|min:1900|max:2100',
             'video_url'          => 'nullable|url|max:255',
+            'cover_image'        => 'nullable|string|max:500',
             'order'              => 'nullable|integer',
         ]);
 
@@ -132,12 +138,16 @@ class ProjectController extends Controller
             ]);
         }
 
-        // Set cover_image from first slider image (or first gallery image as fallback)
-        $cover = $project->images()->where('type', 'slider')->orderBy('order')->first()
-            ?? $project->images()->where('type', 'gallery')->orderBy('order')->first();
-
-        if ($cover) {
-            $project->update(['cover_image' => $cover->image]);
+        // cover_image: manuel seçilmişse onu kullan, seçilmemişse slider/galeri'den ata
+        $manualCover = request()->input('cover_image');
+        if ($manualCover) {
+            $project->update(['cover_image' => $manualCover]);
+        } else {
+            $cover = $project->images()->where('type', 'slider')->orderBy('order')->first()
+                ?? $project->images()->where('type', 'gallery')->orderBy('order')->first();
+            if ($cover) {
+                $project->update(['cover_image' => $cover->image]);
+            }
         }
     }
 

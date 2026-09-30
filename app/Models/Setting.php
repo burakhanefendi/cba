@@ -17,4 +17,15 @@ class Setting extends Model
     {
         static::updateOrCreate(['key' => $key], ['value' => $value]);
     }
+
+    public static function defaultLocale(): string
+    {
+        try {
+            $locale = static::get('default_locale', 'tr');
+        } catch (\Throwable) {
+            return 'tr';
+        }
+
+        return in_array($locale, ['tr', 'en'], true) ? $locale : 'tr';
+    }
 }

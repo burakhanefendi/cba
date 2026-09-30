@@ -62,19 +62,38 @@
         {{-- Sağ: Görseller + Meta + Linkler --}}
         <div class="news-sidebar">
 
+            {{-- Thumbnail --}}
+            <div class="form-card">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>Thumbnail <span class="label-hint">— anasayfa ve listeleme görseli</span></label>
+                    <div id="coverPreview" style="margin-bottom:8px;">
+                        @if(isset($news) && $news->cover_image)
+                            <div class="media-preview-item" data-path="{{ $news->cover_image }}" style="position:relative;display:inline-block;max-width:160px;">
+                                <img src="{{ asset('storage/' . $news->cover_image) }}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;">
+                                <button type="button" class="media-preview-remove" onclick="clearCover()">×</button>
+                            </div>
+                        @endif
+                    </div>
+                    <input type="hidden" name="cover_image" id="coverImageInput" value="{{ old('cover_image', $news->cover_image ?? '') }}">
+                    <div style="display:flex;gap:6px;align-items:center;">
+                        <button type="button" class="btn btn-secondary btn-sm"
+                            onclick="MediaPicker.open({ multiple: false, onSelect: items => setCover(items[0]) })">
+                            Kütüphaneden Seç
+                        </button>
+                        @if(isset($news) && $news->cover_image)
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="clearCover()">Kaldır</button>
+                        @endif
+                    </div>
+                    <p style="font-size:11px;color:#aaa;margin:6px 0 0;">Seçilmezse otomatik atanır (slider 1. görsel)</p>
+                </div>
+            </div>
+
             {{-- Ana Görsel --}}
             <div class="form-card">
                 <div class="form-group" style="margin-bottom:0;">
                     <label>Ana Görsel <span class="label-hint">— birden fazla → slider</span></label>
 
                     <div class="media-preview-list" id="sliderPreview">
-                        @if(isset($news) && $news->cover_image)
-                            <div class="media-preview-item" data-path="{{ $news->cover_image }}">
-                                <img src="{{ asset('storage/' . $news->cover_image) }}">
-                                <button type="button" class="media-preview-remove">×</button>
-                                <input type="hidden" name="slider_paths[]" value="{{ $news->cover_image }}">
-                            </div>
-                        @endif
                         @if(isset($news))
                             @foreach($news->sliderImages as $img)
                                 <div class="media-preview-item" data-path="{{ $img->image }}">
@@ -351,7 +370,20 @@ document.getElementById('linksContainer').addEventListener('click', function (e)
 
 @push('scripts')
 <script>
-// Media preview helper
+function setCover(item) {
+    const path = item.url.split('/storage/')[1];
+    document.getElementById('coverImageInput').value = path;
+    const preview = document.getElementById('coverPreview');
+    preview.innerHTML = `<div class="media-preview-item" data-path="${path}" style="position:relative;display:inline-block;max-width:160px;">
+        <img src="${item.url}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;">
+        <button type="button" class="media-preview-remove" onclick="clearCover()">×</button>
+    </div>`;
+}
+function clearCover() {
+    document.getElementById('coverImageInput').value = '';
+    document.getElementById('coverPreview').innerHTML = '';
+}
+
 function addToPreview(containerId, items) {
     const container = document.getElementById(containerId);
     items.forEach(item => {
