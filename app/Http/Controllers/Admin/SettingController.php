@@ -18,7 +18,9 @@ class SettingController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'logo' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:2048',
+            'logo'            => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:2048',
+            'default_locale'  => 'required|in:tr,en',
+            'contact_map_url' => 'nullable|url',
         ]);
 
         if ($request->hasFile('logo')) {
@@ -29,7 +31,7 @@ class SettingController extends Controller
             Setting::set('logo', $path);
         }
 
-        $fields = ['site_title', 'site_description', 'contact_email', 'contact_phone', 'contact_address'];
+        $fields = ['site_title', 'site_description', 'contact_email', 'contact_phone', 'contact_address', 'contact_map_url', 'default_locale'];
 
         foreach ($fields as $field) {
             if ($request->has($field)) {

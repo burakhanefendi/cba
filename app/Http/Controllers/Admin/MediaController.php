@@ -11,19 +11,59 @@ class MediaController extends Controller
 {
     public function index(Request $request)
     {
-        $media = Media::latest()->paginate(40);
-        return view('admin.media.index', compact('media'));
+        $folders = \DB::table('media_folders')->orderBy('name')->pluck('name');
+        $folder  = $request->get('folder');
+
+        $query = Media::orderBy('order')->orderBy('name');
+        if ($folder) {
+            $query->where('folder', $folder);
+        }
+
+        $media = $query->paginate(60)->withQueryString();
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'data' => $media->map(fn($m) => [
+                    'id'         => $m->id,
+                    'url'        => $m->url,
+                    'name'       => $m->name,
+                    'human_size' => $m->human_size,
+                ]),
+                'next_page_url' => $media->nextPageUrl(),
+            ]);
+        }
+
+        return view('admin.media.index', compact('media', 'folders', 'folder'));
+    }
+
+    public function createFolder(Request $request)
+    {
+        $name = trim($request->input('name', ''));
+        if (!$name) {
+            return response()->json(['success' => false, 'message' => 'Klasör adı boş olamaz.'], 422);
+        }
+        \DB::table('media_folders')->insertOrIgnore(['name' => $name, 'created_at' => now(), 'updated_at' => now()]);
+        return response()->json(['success' => true, 'name' => $name]);
     }
 
     public function store(Request $request)
     {
+        // PHP max_file_uploads limitini artır
+        @ini_set('max_file_uploads', 200);
+
         $request->validate([
             'files.*' => 'required|file|mimes:jpg,jpeg,png,gif,webp,svg|max:8192',
         ]);
 
+        $folder   = $request->input('folder') ?: null;
         $uploaded = [];
 
-        foreach ($request->file('files', []) as $file) {
+        $files = $request->file('files', []);
+
+        // İsme göre sırala
+        usort($files, fn($a, $b) => strcmp($a->getClientOriginalName(), $b->getClientOriginalName()));
+
+        foreach ($files as $file) {
             $path     = $file->store('media', 'public');
             $fullPath = storage_path('app/public/' . $path);
 
@@ -31,6 +71,7 @@ class MediaController extends Controller
 
             $media = Media::create([
                 'name'      => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
+                'folder'    => $folder,
                 'path'      => $path,
                 'mime_type' => $file->getMimeType(),
                 'size'      => $file->getSize(),
@@ -39,9 +80,10 @@ class MediaController extends Controller
             ]);
 
             $uploaded[] = [
-                'id'   => $media->id,
-                'url'  => $media->url,
-                'name' => $media->name,
+                'id'     => $media->id,
+                'url'    => $media->url,
+                'name'   => $media->name,
+                'folder' => $media->folder,
             ];
         }
 
@@ -54,17 +96,54 @@ class MediaController extends Controller
 
     public function list(Request $request)
     {
-        $media = Media::latest()->paginate(40);
+        $folder = $request->get('folder');
+        $page   = max(1, (int) $request->get('page', 1));
+
+        $query = Media::orderBy('name');
+        if ($folder) {
+            $query->where('folder', $folder);
+        }
+
+        $paginated = $query->paginate(40, ['*'], 'page', $page);
+
         return response()->json([
-            'data' => $media->map(fn($m) => [
+            'data' => $paginated->map(fn($m) => [
                 'id'         => $m->id,
                 'name'       => $m->name,
+                'folder'     => $m->folder,
                 'url'        => $m->url,
                 'human_size' => $m->human_size,
                 'mime_type'  => $m->mime_type,
             ]),
-            'next_page_url' => $media->nextPageUrl(),
+            'current_page'  => $paginated->currentPage(),
+            'last_page'     => $paginated->lastPage(),
+            'next_page_url' => $paginated->nextPageUrl(),
         ]);
+    }
+
+    public function folders()
+    {
+        $folders = \DB::table('media_folders')->orderBy('name')->pluck('name');
+        return response()->json($folders);
+    }
+
+    public function move(Request $request)
+    {
+        $ids    = $request->input('ids', []);
+        $folder = $request->input('folder'); // null = kök dizin
+        if ($ids) {
+            Media::whereIn('id', $ids)->update(['folder' => $folder ?: null]);
+        }
+        return response()->json(['success' => true]);
+    }
+
+    public function reorder(Request $request)
+    {
+        $ids = $request->input('ids', []);
+        foreach ($ids as $i => $id) {
+            Media::where('id', $id)->update(['order' => $i]);
+        }
+        return response()->json(['success' => true]);
     }
 
     public function destroy(Media $media)

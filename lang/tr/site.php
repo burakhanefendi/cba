@@ -24,6 +24,15 @@ return [
         'project'  => 'Proje',
         'link'     => 'Bağlantı',
     ],
+    'about' => [
+        'cafer'         => 'CAFER BOZKURT',
+        'studio'        => 'STÜDYO',
+        'team'          => 'EKİP',
+        'awards'        => 'ÖDÜLLER',
+        'publications'  => 'YAYINLAR',
+        'pdf'           => 'PDF GÖRÜNTÜLE',
+        'go_link'       => 'LINKE GIT',
+    ],
     'projects' => [
         'title'    => 'PROJELER',
         'location' => 'Konum',
@@ -35,9 +44,17 @@ return [
         'name'    => 'Ad Soyad',
         'email'   => 'E-posta',
         'phone'   => 'Telefon',
+        'address' => 'Adres',
+        'map'     => 'Haritada göster',
         'subject' => 'Konu',
         'message' => 'Mesaj',
         'send'    => 'Gönder',
+    ],
+    'search' => [
+        'title' => 'ARA',
+        'hint'  => 'Aramak için en az 2 karakter yazın.',
+        'empty' => '“:q” için sonuç bulunamadı.',
+        'count' => ':n sonuç — “:q”',
     ],
     'footer' => [
         'rights'    => 'Tüm hakları saklıdır.',

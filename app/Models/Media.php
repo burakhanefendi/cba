@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Media extends Model
 {
-    protected $fillable = ['name', 'path', 'mime_type', 'size', 'width', 'height'];
+    protected $fillable = ['name', 'folder', 'path', 'mime_type', 'size', 'width', 'height', 'order'];
 
     public function getUrlAttribute(): string
     {

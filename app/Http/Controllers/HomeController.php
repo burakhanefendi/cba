@@ -17,7 +17,6 @@ class HomeController extends Controller
             ->where('is_active', true)
             ->where('is_featured', true)
             ->orderBy('order')
-            ->take(8)
             ->get();
 
         $featuredNews = News::where('is_active', true)

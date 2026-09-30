@@ -48,6 +48,15 @@
                 <label>Site Açıklaması</label>
                 <textarea name="site_description" rows="3">{{ $settings->get('site_description') }}</textarea>
             </div>
+
+            <div class="form-group">
+                <label>Varsayılan Dil</label>
+                <select name="default_locale">
+                    <option value="tr" @selected(($settings->get('default_locale') ?: 'tr') === 'tr')>Türkçe</option>
+                    <option value="en" @selected($settings->get('default_locale') === 'en')>English</option>
+                </select>
+                <div class="form-hint">Ziyaretçiler siteye ilk kez geldiğinde bu dil açılır. Dil seçici ile değiştirebilirler.</div>
+            </div>
         </div>
 
         {{-- İletişim --}}
@@ -67,6 +76,12 @@
             <div class="form-group">
                 <label>Adres</label>
                 <textarea name="contact_address" rows="3">{{ $settings->get('contact_address') }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Harita Linki</label>
+                <input type="url" name="contact_map_url" value="{{ $settings->get('contact_map_url') }}">
+                <div class="form-hint">Google Maps paylaşım bağlantısı. İletişim sayfasındaki harita ve adres bu linke gider.</div>
             </div>
         </div>
 
@@ -114,6 +129,14 @@
     font-size: 12px;
     color: #bbb;
     padding: 12px 0;
+}
+.form-hint {
+    font-size: 12px;
+    font-weight: 300;
+    color: #bbb;
+    margin-top: 8px;
+    text-transform: none;
+    letter-spacing: 0;
 }
 </style>
 @endpush

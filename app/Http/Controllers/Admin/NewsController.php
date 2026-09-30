@@ -28,6 +28,7 @@ class NewsController extends Controller
         $request->validate([
             'title'        => 'required|string|max:255',
             'published_at' => 'nullable|date',
+            'cover_image'  => 'nullable|string|max:500',
         ]);
 
         $data = $request->only(['title', 'title_en', 'excerpt', 'excerpt_en', 'content', 'content_en', 'published_at', 'order', 'is_active']);
@@ -56,6 +57,7 @@ class NewsController extends Controller
         $request->validate([
             'title'        => 'required|string|max:255',
             'published_at' => 'nullable|date',
+            'cover_image'  => 'nullable|string|max:500',
         ]);
 
         $data = $request->only(['title', 'title_en', 'excerpt', 'excerpt_en', 'content', 'content_en', 'order']);
@@ -83,23 +85,22 @@ class NewsController extends Controller
 
     private function syncCoverImages(News $news, Request $request): void
     {
-        // Tüm mevcut slider görsellerini sıfırla
         $news->sliderImages()->delete();
-        $news->update(['cover_image' => null]);
 
-        $paths = $request->input('slider_paths', []);
+        $paths = array_values(array_filter($request->input('slider_paths', [])));
         foreach ($paths as $i => $path) {
-            if ($i === 0) {
-                $news->update(['cover_image' => $path]);
-            } else {
-                NewsImage::create([
-                    'news_id' => $news->id,
-                    'image'   => $path,
-                    'type'    => 'slider',
-                    'order'   => $i,
-                ]);
-            }
+            NewsImage::create([
+                'news_id' => $news->id,
+                'image'   => $path,
+                'type'    => 'slider',
+                'order'   => $i,
+            ]);
         }
+
+        $manualCover = $request->input('cover_image');
+        $news->update([
+            'cover_image' => $manualCover ?: ($paths[0] ?? null),
+        ]);
     }
 
     private function syncLinks(News $news, Request $request): void
