@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CBA — Yönetim Paneli</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    @php $favicon = \App\Models\Setting::favicon(); @endphp
+    <link rel="icon" type="{{ $favicon['type'] }}" href="{{ $favicon['url'] }}">
     <link rel="stylesheet" href="/css/admin.css">
     @stack('styles')
 </head>
@@ -45,7 +48,6 @@
         <div class="nav-section">Genel</div>
         <a href="{{ route('admin.homepage.index') }}" class="{{ request()->routeIs('admin.homepage.*') ? 'active' : '' }}">Anasayfa</a>
         <a href="{{ route('admin.media.index') }}" class="{{ request()->routeIs('admin.media.*') ? 'active' : '' }}">Medya Kütüphanesi</a>
-        <a href="{{ route('admin.messages.index') }}" class="{{ request()->routeIs('admin.messages.*') ? 'active' : '' }}">Mesajlar</a>
         <a href="{{ route('admin.settings.index') }}" class="{{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">Ayarlar</a>
     </nav>
 

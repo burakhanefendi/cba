@@ -43,7 +43,7 @@ class ProfileEntryController extends Controller
         unset($data['pdf'], $data['project_ids']);
         $data['type'] = $this->entryType();
         $data['is_active'] = $request->boolean('is_active');
-        $data['order'] = $data['order'] ?? 0;
+        $data['order'] = (int) ProfileEntry::where('type', $this->entryType())->max('order') + 1;
         $data['pdf'] = $this->storePdf($request);
 
         $entry = ProfileEntry::create($data);
@@ -75,7 +75,6 @@ class ProfileEntryController extends Controller
         $data = $this->validated($request);
         unset($data['pdf'], $data['project_ids']);
         $data['is_active'] = $request->boolean('is_active');
-        $data['order'] = $data['order'] ?? 0;
 
         if ($request->boolean('remove_pdf') && $entry->pdf) {
             Storage::disk('public')->delete($entry->pdf);
@@ -110,6 +109,22 @@ class ProfileEntryController extends Controller
             ->with('success', $this->labels()['singular'] . ' silindi.');
     }
 
+    public function reorder(Request $request)
+    {
+        $ids = $request->validate([
+            'ids'   => 'required|array',
+            'ids.*' => 'integer|exists:profile_entries,id',
+        ])['ids'];
+
+        $type = $this->entryType();
+
+        foreach ($ids as $i => $id) {
+            ProfileEntry::where('id', $id)->where('type', $type)->update(['order' => $i]);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
     private function validated(Request $request): array
     {
         return $request->validate([
@@ -120,7 +135,6 @@ class ProfileEntryController extends Controller
             'image'        => 'nullable|string|max:500',
             'external_url' => 'nullable|url|max:500',
             'pdf'          => 'nullable|file|mimes:pdf|max:20480',
-            'order'        => 'nullable|integer',
             'project_ids'  => 'nullable|array',
             'project_ids.*'=> 'integer|exists:projects,id',
         ]);

@@ -21,7 +21,7 @@ class HomeController extends Controller
 
         $featuredNews = News::where('is_active', true)
             ->where('is_featured', true)
-            ->orderByDesc('published_at')
+            ->orderBy('order')
             ->take(4)
             ->get();
 

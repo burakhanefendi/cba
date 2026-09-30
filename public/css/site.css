@@ -300,9 +300,9 @@ img { display: block; max-width: 100%; }
 
 .hero {
     width: 100%;
-    aspect-ratio: 1440 / 600;
+    height: calc(min(976px, 100vw - 48px) * 600 / 1440 + 100px);
     overflow: hidden;
-    background: #d8d8d8;
+    background: #fff;
     margin-top: 24px;
     position: relative;
 }
@@ -1011,7 +1011,7 @@ img { display: block; max-width: 100%; }
 .news-slider {
     position: relative;
     overflow: hidden;
-    background: #e0e0e0;
+    background: #fff;
     margin-bottom: 20px;
 }
 
@@ -1026,8 +1026,10 @@ img { display: block; max-width: 100%; }
 
 .news-slide img {
     width: 100%;
-    aspect-ratio: 1440 / 600;
+    height: calc(min(976px, 100vw - 48px) * 600 / 1440 + 100px);
     object-fit: cover;
+    object-position: center;
+    display: block;
 }
 
 .slider-btn {

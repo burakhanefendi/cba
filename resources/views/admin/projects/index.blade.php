@@ -8,11 +8,13 @@
     <h2>Projeler</h2>
     <a href="{{ route('admin.projects.create') }}" class="btn btn-primary">+ Yeni Proje</a>
 </div>
+<p class="table-hint">Sıralamak için satırları sürükleyin. Bu sıra sitede de kullanılır.</p>
 
 <div class="table-wrapper">
     <table>
         <thead>
             <tr>
+                <th style="width:36px;"></th>
                 <th>Görsel</th>
                 <th>Başlık</th>
                 <th>Kategori</th>
@@ -21,9 +23,10 @@
                 <th></th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="sortableProjects">
             @forelse($projects as $project)
-                <tr>
+                <tr data-id="{{ $project->id }}">
+                    <td class="drag-handle" title="Sürükle">⠿</td>
                     <td style="width:56px;">
                         @if($project->cover_image)
                             <img src="{{ asset('storage/' . $project->cover_image) }}"
@@ -54,12 +57,15 @@
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="6" style="color:#bbb;text-align:center;padding:24px;">Henüz proje yok.</td></tr>
+                <tr><td colspan="7" style="color:#bbb;text-align:center;padding:24px;">Henüz proje yok.</td></tr>
             @endforelse
         </tbody>
     </table>
 </div>
 
-<div style="margin-top:16px;">{{ $projects->links() }}</div>
+@include('admin.partials.sortable-table', [
+    'tbodyId' => 'sortableProjects',
+    'url' => route('admin.projects.reorder'),
+])
 
 @endsection
